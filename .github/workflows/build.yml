@@ -29,16 +29,12 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch and Patch Build Script
+      - name: Fetch Motif Build Script
         run: |
           if [ ! -f "motif_build_v12.txt" ]; then
-            echo "Fetching base build script from Macos-amama-single-git..."
+            echo "Fetching Motif build script from Macos-amama-single-git..."
             curl -fsSL https://raw.githubusercontent.com/ageanton/Macos-amama-single-git/main/motif_build_v12.txt -o motif_build_v12.txt
           fi
-          echo "Unpacking motif.patch..."
-          python3 unpack_patch.py
-          echo "Applying patch..."
-          patch -u motif_build_v12.txt < motif.patch
           echo "Verifying syntax..."
           bash -n motif_build_v12.txt
 
