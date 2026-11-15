@@ -8165,12 +8165,20 @@ public struct EditorialConversationView: View {
                         .foregroundColor(tokens.thinkingText.opacity(0.75))
 
                     if !node.thinkingTrace.isEmpty {
-                        Text("· \(wordCount) \(wordCount == 1 ? "word" : "words")")\n\n                    let thinkTok = (node.metrics?.thinkingTokens ?? 0) > 0 ? (node.metrics?.thinkingTokens ?? 0) : (isActivelyThinking ? store.liveThinkingTokens : 0)\n                    if thinkTok > 0 {\n                        Text("· ~\(thinkTok) thinking tok")\n                            .font(typo.sans(size: headerFontSize, weight: .regular).monospacedDigit())\n                            .foregroundColor(tokens.thinkingText.opacity(0.70))\n                    }
+                        Text("· \(wordCount) \(wordCount == 1 ? "word" : "words")")
                             .font(typo.sans(size: headerFontSize, weight: .regular).monospacedDigit())
                             .foregroundColor(tokens.thinkingText.opacity(0.70))
+
+                        let thinkTok = (node.metrics?.thinkingTokens ?? 0) > 0 ? (node.metrics?.thinkingTokens ?? 0) : (isActivelyThinking ? store.liveThinkingTokens : 0)
+                        if thinkTok > 0 {
+                            Text("· ~\(thinkTok) thinking tok")
+                                .font(typo.sans(size: headerFontSize, weight: .regular).monospacedDigit())
+                                .foregroundColor(tokens.thinkingText.opacity(0.70))
+                        }
                     }
 
-                    Image(systemName: "chevron.right")
+                    
+Image(systemName: "chevron.right")
                         .font(.system(size: 8.5, weight: .bold))
                         .foregroundColor(tokens.thinkingText.opacity(0.75))
                         .rotationEffect(.degrees(node.isThinkingExpanded ? 90 : 0))
