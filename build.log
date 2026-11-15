@@ -12,7 +12,7 @@ Target: arm64-apple-macosx15.0
 ===== [2/17] Create Project Directory Structure & Bundle Verified Custom Fonts (Jakarta, Inter, Open Sans, Geist) =====
 
 ===== [3/17] Generate Programmatic macOS Squircle AppIcon.icns =====
--rw-r--r--  1 runner  staff   431K Nov 15 08:23 build/AppIcon.icns
+-rw-r--r--  1 runner  staff   431K Nov 15 10:17 build/AppIcon.icns
 
 ===== [4/17] Generate Package.swift =====
 
@@ -39,22 +39,22 @@ Target: arm64-apple-macosx15.0
 ===== [15/17] Compile Release Universal Binary (Swift 6) =====
 Building for production...
 [0/8] Copying PlusJakartaSans-Variable.ttf
-[0/8] Copying Inter-Variable.ttf
 [0/8] Copying OpenSans-Variable.ttf
-[0/8] Copying Geist-Variable.ttf
-[0/8] Write sources
+[1/8] Copying Inter-Variable.ttf
+[1/8] Copying Geist-Variable.ttf
+[4/8] Write sources
 [5/8] Write swift-version--79AA4F9932D1E87A.txt
 [7/9] Compiling Motif GlassAndTelemetryComponents.swift
 [7/9] Write Objects.LinkFileList
 [8/9] Linking Motif
-Build complete! (61.98s)
--rwxr-xr-x  1 runner  staff   6.6M Nov 15 08:24 .build/arm64-apple-macosx/release/Motif
+Build complete! (38.42s)
+-rwxr-xr-x  1 runner  staff   6.6M Nov 15 10:18 .build/arm64-apple-macosx/release/Motif
 
 ===== [16/17] Assemble Motif Application Bundle (.app) =====
-build/dmg_staging/AntiGravity.app: replacing existing signature
-build/dmg_staging/AntiGravity.app: valid on disk
-build/dmg_staging/AntiGravity.app: satisfies its Designated Requirement
+build/dmg_staging/Motif.app: replacing existing signature
+build/dmg_staging/Motif.app: valid on disk
+build/dmg_staging/Motif.app: satisfies its Designated Requirement
 
 ===== [17/17] Package Compressed macOS Disk Image (.dmg) =====
-created: /Users/runner/work/AntiGravity/AntiGravity/build/AntiGravity-1.0.0-macOS-arm64.dmg
--rw-r--r--@ 1 runner  staff   4.1M Nov 15 08:24 build/AntiGravity-1.0.0-macOS-arm64.dmg
+created: /Users/runner/work/AntiGravity/AntiGravity/build/Motif-1.0.0-macOS-arm64.dmg
+-rw-r--r--@ 1 runner  staff   4.1M Nov 15 10:18 build/Motif-1.0.0-macOS-arm64.dmg
