@@ -1,4 +1,4 @@
-name: Build AntiGravity macOS App & DMG
+name: Build Motif macOS App & DMG
 
 on:
   push:
@@ -12,15 +12,15 @@ permissions:
   contents: write
 
 env:
-  APP_NAME: "AntiGravity"
-  DISPLAY_NAME: "AntiGravity"
-  BUNDLE_ID: "com.antigravity.studio.macos"
+  APP_NAME: "Motif"
+  DISPLAY_NAME: "Motif"
+  BUNDLE_ID: "com.motif.studio.macos"
   VERSION: "1.0.0"
   BUILD_NUMBER: "100"
 
 jobs:
   build-macos-dmg:
-    name: Compile Native Swift 6 AntiGravity Workstation & Package DMG (macOS 15)
+    name: Compile Native Swift 6 Motif Workstation & Package DMG (macOS 15)
     runs-on: macos-15
 
     steps:
@@ -37,7 +37,7 @@ jobs:
           fi
           python3 patch_build.py
 
-      - name: Run AntiGravity Build Script
+      - name: Run Motif Build Script
         run: |
           chmod +x motif_build_v12.txt
           ./motif_build_v12.txt 2>&1 | tee build.log
@@ -55,14 +55,14 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: AntiGravity-Build-Log
+          name: Motif-Build-Log
           path: build.log
           if-no-files-found: ignore
 
       - name: Upload Compiled DMG Installer
         uses: actions/upload-artifact@v4
         with:
-          name: AntiGravity-macOS-AppleSilicon-DMG
+          name: Motif-macOS-AppleSilicon-DMG
           path: build/*.dmg
           if-no-files-found: error
           retention-days: 30
