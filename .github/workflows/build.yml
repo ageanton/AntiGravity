@@ -29,18 +29,14 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch Motif Build Script
+      - name: Make Build Script Executable & Verify Syntax
         run: |
-          if [ ! -f "motif_build_v12.txt" ]; then
-            echo "Fetching Motif build script from Macos-amama-single-git..."
-            curl -fsSL https://raw.githubusercontent.com/ageanton/Macos-amama-single-git/main/motif_build_v12.txt -o motif_build_v12.txt
-          fi
-          echo "Verifying syntax..."
+          echo "Verifying local motif_build_v12.txt syntax..."
           bash -n motif_build_v12.txt
+          chmod +x motif_build_v12.txt
 
       - name: Run Motif Build Script
         run: |
-          chmod +x motif_build_v12.txt
           ./motif_build_v12.txt 2>&1 | tee build.log
 
       - name: Commit Build Log to Main
