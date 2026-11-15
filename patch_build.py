@@ -22,7 +22,7 @@ def patch_motif():
     }
 }"""
 
-    new_parser = """// MARK: - Stop-Safe Stateful Thinking Stream Parser
+    new_parser = r"""// MARK: - Stop-Safe Stateful Thinking Stream Parser
 public final class StatefulThinkingStreamParser {
     public enum State {
         case normalOrAwaitingOpeningTag
@@ -155,7 +155,7 @@ public final class StatefulThinkingStreamParser {
                     accumulatedThinking += accumulatedAnswer + thoughtSegment
                     accumulatedAnswer = ""
                     pendingBuffer.removeSubrange(..<closeMatch.range.upperBound)
-                    if pendingBuffer.hasPrefix("\n") {
+                    if let first = pendingBuffer.first, first.isNewline {
                         pendingBuffer.removeFirst()
                     }
                     state = .postThinkingAnswer
@@ -184,7 +184,7 @@ public final class StatefulThinkingStreamParser {
                     let thoughtSegment = String(pendingBuffer[..<match.range.lowerBound])
                     accumulatedThinking += thoughtSegment
                     pendingBuffer.removeSubrange(..<match.range.upperBound)
-                    if pendingBuffer.hasPrefix("\n") {
+                    if let first = pendingBuffer.first, first.isNewline {
                         pendingBuffer.removeFirst()
                     }
                     isCurrentlyThinking = false
@@ -204,7 +204,7 @@ public final class StatefulThinkingStreamParser {
                     let thoughtSegment = String(pendingBuffer[..<match.range.lowerBound])
                     accumulatedThinking += thoughtSegment
                     pendingBuffer.removeSubrange(..<match.range.upperBound)
-                    if pendingBuffer.hasPrefix("\n") {
+                    if let first = pendingBuffer.first, first.isNewline {
                         pendingBuffer.removeFirst()
                     }
                     isCurrentlyThinking = false
@@ -218,10 +218,10 @@ public final class StatefulThinkingStreamParser {
     }
 
     private func findFirstTag(in text: String, tags: [String]) -> (tag: String, range: Range<String.Index>)? {
-        var earliest: (String, Range<String.Index>)? = nil
+        var earliest: (tag: String, range: Range<String.Index>)? = nil
         for tag in tags {
             if let range = text.range(of: tag, options: .caseInsensitive) {
-                if earliest == nil || range.lowerBound < earliest!.1.lowerBound {
+                if earliest == nil || range.lowerBound < earliest!.range.lowerBound {
                     earliest = (tag, range)
                 }
             }
