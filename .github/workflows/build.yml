@@ -38,7 +38,23 @@ jobs:
       - name: Run AntiGravity Build Script
         run: |
           chmod +x motif_build_v12.txt
-          bash --noprofile --norc -e -o pipefail ./motif_build_v12.txt
+          ./motif_build_v12.txt 2>&1 | tee build.log
+
+      - name: Publish Build Log Summary
+        if: always()
+        run: |
+          echo "### Build Log (Last 100 lines)" >> $GITHUB_STEP_SUMMARY
+          echo '```text' >> $GITHUB_STEP_SUMMARY
+          tail -n 100 build.log >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "No build.log found" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Build Log Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: AntiGravity-Build-Log
+          path: build.log
+          if-no-files-found: ignore
 
       - name: Upload Compiled DMG Installer
         uses: actions/upload-artifact@v4
