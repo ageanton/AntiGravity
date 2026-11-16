@@ -26,46 +26,11 @@ jobs:
         run: |
           set -e
           echo "Starting build pointing to Newappfile.txt..."
-          if head -n 5 Newappfile.txt | grep -q "name:"; then
-            echo "Extracting and executing workflow steps from Newappfile.txt..."
-            echo 'use strict;' > run_build.pl
-            echo 'use warnings;' >> run_build.pl
-            echo 'open my $fh, "<", "Newappfile.txt" or die $!;' >> run_build.pl
-            echo 'my $content = do { local $/; <$fh> };' >> run_build.pl
-            echo 'close $fh;' >> run_build.pl
-            echo '$content =~ s/public struct BlackMotifApp: App/struct BlackMotifApp: App/g;' >> run_build.pl
-            echo '$content =~ s/(\s*)for try await line in followBytes\.lines \{/$1do {\n$1    for try await line in followBytes.lines {/g;' >> run_build.pl
-            echo '$content =~ s/(\s*)parser\.flushPendingBufferWithoutLosingState\(markComplete: true\)/$1    }\n$1} catch {}\n$1parser.flushPendingBufferWithoutLosingState(markComplete: true)/g;' >> run_build.pl
-            echo '$content =~ s/(commitActiveRenameIfNeeded\(\)\s*\}\s*\}\s*\}\s*)\}\s*(\/\/ MARK: - In-Place Archive View)/$1$2/s;' >> run_build.pl
-            echo '$content =~ s/\.swiftLanguageMode\(\.v5\)/.swiftLanguageMode(.v5),\n                          .unsafeFlags(["-Xfrontend", "-solver-expression-time-threshold=60"])/g;' >> run_build.pl
-            echo '$content =~ s/let ov = overrideBinding\(for: theme\)/var o = store.customPalettes.override(for: theme)/g;' >> run_build.pl
-            echo '$content =~ s/ov\.wrappedValue/o/g;' >> run_build.pl
-            echo '$content =~ s/(o\.canvasBlue = Double\(cg\.blueComponent\)\s*\})/$1\n                    store.customPalettes.setOverride(o, for: theme)/g;' >> run_build.pl
-            echo '$content =~ s/(o\.accentBlue = Double\(cg\.blueComponent\)\s*\})/$1\n                    store.customPalettes.setOverride(o, for: theme)/g;' >> run_build.pl
-            echo '$content =~ s/(o\.thinkingBlue = Double\(cg\.blueComponent\)\s*\})/$1\n                    store.customPalettes.setOverride(o, for: theme)/g;' >> run_build.pl
-            echo '$content =~ s/ForEach\(DisplayFontChoice\.allCases\)/ForEach(DisplayFontChoice.allCases, id: \\.self)/g;' >> run_build.pl
-            echo '$content =~ s/ForEach\(ProseFontChoice\.allCases\)/ForEach(ProseFontChoice.allCases, id: \\.self)/g;' >> run_build.pl
-            echo '$content =~ s/ForEach\(MonoFontChoice\.allCases\)/ForEach(MonoFontChoice.allCases, id: \\.self)/g;' >> run_build.pl
-            echo 'if ($content =~ /env:\s*\n(.*?)\njobs:/s) {' >> run_build.pl
-            echo '    for my $l (split /\n/, $1) {' >> run_build.pl
-            echo '        if ($l =~ /^\s*([A-Za-z0-9_]+):\s*["\x27]?(.*?)["\x27]?\s*$/) {' >> run_build.pl
-            echo '            $ENV{$1} = $2;' >> run_build.pl
-            echo '        }' >> run_build.pl
-            echo '    }' >> run_build.pl
-            echo '}' >> run_build.pl
-            echo 'while ($content =~ /-\s*name:\s*([^\n]+)\s*\n\s*run:\s*\|\n(.*?)(?=\n\s*(?:-\s*name:|\Z))/sg) {' >> run_build.pl
-            echo '    my ($name, $code) = ($1, $2);' >> run_build.pl
-            echo '    $code =~ s/^[ ]{10}//mg;' >> run_build.pl
-            echo '    print "\n===== [RUN] $name =====\n";' >> run_build.pl
-            echo '    system("bash", "-e", "-c", $code) == 0 or die "FAILED STEP: $name\n";' >> run_build.pl
-            echo '}' >> run_build.pl
-            perl run_build.pl 2>&1 | tee build.log
-            test ${PIPESTATUS[0]} -eq 0
-          else
-            chmod +x Newappfile.txt
-            ./Newappfile.txt 2>&1 | tee build.log
-            test ${PIPESTATUS[0]} -eq 0
-          fi
+          base64 -d << 'EOF' > run_build.pl
+          dXNlIHN0cmljdDsKdXNlIHdhcm5pbmdzOwoKb3BlbiBteSAkZmgsICI8IiwgIk5ld2FwcGZpbGUudHh0IiBvciBkaWUgJCE7Cm15ICRjb250ZW50ID0gZG8geyBsb2NhbCAkLzsgPCRmaD4gfTsKY2xvc2UgJGZoOwoKIyAxLiBTd2lmdCA2IHByb3RvY29sIHJlcXVpcmVtZW50IGZvciBAbWFpbiBzdHJ1Y3QgaW5pdAokY29udGVudCA9fiBzL3B1YmxpYyBzdHJ1Y3QgQmxhY2tNb3RpZkFwcDogQXBwL3N0cnVjdCBCbGFja01vdGlmQXBwOiBBcHAvZzsKCiMgMi4gU2lkZWJhciBjbG9zaW5nIGJyYWNlIGZpeAokY29udGVudCA9fiBzLyhjb21taXRBY3RpdmVSZW5hbWVJZk5lZWRlZFwoXClccypcfVxzKlx9XHMqXH1ccyopXH1ccyooXC9cLyBNQVJLOiAtIEluLVBsYWNlIEFyY2hpdmUgVmlldykvJDEkMi9zOwoKIyAzLiBXb3Jrc3RhdGlvblN0b3JlIHN0cmVhbSBsaW5lIGRvLWNhdGNoCiRjb250ZW50ID1+IHMvZm9yIHRyeSBhd2FpdCBsaW5lIGluIGZvbGxvd0J5dGVzXC5saW5lcyBceyguKj9cblxzKlx9KVxuKFxzKnBhcnNlclwuZmx1c2hQZW5kaW5nQnVmZmVyV2l0aG91dExvc2luZ1N0YXRlKS9kbyB7XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBmb3IgdHJ5IGF3YWl0IGxpbmUgaW4gZm9sbG93Qnl0ZXMubGluZXMgeyQxXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0gY2F0Y2gge31cbiQyL3M7CgojIDQuIFV0aWxpdHlBbmRNb2RhbFZpZXdzIGxldCBvdiAtPiB2YXIgb3YKJGNvbnRlbnQgPX4gcy9sZXQgb3YgPSBvdmVycmlkZUJpbmRpbmdcKGZvcjogdGhlbWVcKS92YXIgb3YgPSBvdmVycmlkZUJpbmRpbmcoZm9yOiB0aGVtZSkvZzsKCiMgNS4gSW5HcmlkU2V0dGluZ3NQYWdlVmlldyBib2R5IHN1Yi1leHByZXNzaW9uIGRlY29tcG9zaXRpb24gZm9yIFN3aWZ0IHR5cGUtY2hlY2tlcgpteSAkcGF0ID0gcXIvcHVibGljIHZhciBib2R5OiBzb21lIFZpZXcgXHtccypTY3JvbGxWaWV3XChcLnZlcnRpY2FsLCBzaG93c0luZGljYXRvcnM6IHRydWVcKSBce1xzKlZTdGFja1woYWxpZ25tZW50OiBcLmxlYWRpbmcsIHNwYWNpbmc6IDI0XCkgXHtccyooXC9cLyAwMSBcL1wvIE1PTk9DSFJPTUUgUEFMRVRURS4qP1xuXHMqXH0pXHMqSGFpcmxpbmVEaXZpZGVyXCh0b2tlbnM6IHRva2Vuc1wpXHMqKFwvXC8gMDIgXC9cLyAzLUZPTlQgRURJVE9SSUFMIE1JWEVSLio/XG5ccypcfSlccypIYWlybGluZURpdmlkZXJcKHRva2VuczogdG9rZW5zXClccyooXC9cLyAwMyBcL1wvIFNMQVNIIENPTU1BTkQgUEVSU09OQVMuKj9cblxzKlx9KVxzKkhhaXJsaW5lRGl2aWRlclwodG9rZW5zOiB0b2tlbnNcKVxzKihcL1wvIDA0IFwvXC8gTU9ERUxTICYgU1RPUkFHRS4qP1xuXHMqXH0pXHMqSGFpcmxpbmVEaXZpZGVyXCh0b2tlbnM6IHRva2Vuc1wpXHMqKFwvXC8gMDUgXC9cLyBFTkdJTkUgU1VQRVJWSVNPUi4qP1xuXHMqXH0pXHMqXH1ccypcLmZyYW1lXChtYXhXaWR0aDogNzQwLCBhbGlnbm1lbnQ6IFwubGVhZGluZ1wpXHMqXC5wYWRkaW5nXCgyOFwpXHMqXC5mcmFtZVwobWF4V2lkdGg6IFwuaW5maW5pdHlcKVxzKlwuYmFja2dyb3VuZFwoT3ZlcmxheVNjcm9sbENvbmZpZ3VyYXRvclwoaXNEYXJrOiB0b2tlbnNcLmlzRWZmZWN0aXZlbHlEYXJrXClcLmZyYW1lXCh3aWR0aDogMSwgaGVpZ2h0OiAxXClcKVxzKlx9XHMqXH0vczsKCmlmICgkY29udGVudCA9fiAkcGF0KSB7CiAgICBteSAoJHMxLCAkczIsICRzMywgJHM0LCAkczUpID0gKCQxLCAkMiwgJDMsICQ0LCAkNSk7CiAgICBteSAkcmVwID0gcXF7CiAgICBcQFZpZXdCdWlsZGVyIHByaXZhdGUgdmFyIHBhbGV0dGVTZWN0aW9uOiBzb21lIFZpZXcgewogICAgICAgICRzMQogICAgfQogICAgXEBWaWV3QnVpbGRlciBwcml2YXRlIHZhciB0eXBvZ3JhcGh5U2VjdGlvbjogc29tZSBWaWV3IHsKICAgICAgICAkczIKICAgIH0KICAgIFxAVmlld0J1aWxkZXIgcHJpdmF0ZSB2YXIgcGVyc29uYXNTZWN0aW9uOiBzb21lIFZpZXcgewogICAgICAgICRzMwogICAgfQogICAgXEBWaWV3QnVpbGRlciBwcml2YXRlIHZhciBtb2RlbHNTZWN0aW9uOiBzb21lIFZpZXcgewogICAgICAgICRzNAogICAgfQogICAgXEBWaWV3QnVpbGRlciBwcml2YXRlIHZhciBzdXBlcnZpc29yU2VjdGlvbjogc29tZSBWaWV3IHsKICAgICAgICAkczUKICAgIH0KCiAgICBwdWJsaWMgdmFyIGJvZHk6IHNvbWUgVmlldyB7CiAgICAgICAgU2Nyb2xsVmlldygudmVydGljYWwsIHNob3dzSW5kaWNhdG9yczogdHJ1ZSkgewogICAgICAgICAgICBWU3RhY2soYWxpZ25tZW50OiAubGVhZGluZywgc3BhY2luZzogMjQpIHsKICAgICAgICAgICAgICAgIHBhbGV0dGVTZWN0aW9uCiAgICAgICAgICAgICAgICBIYWlybGluZURpdmlkZXIodG9rZW5zOiB0b2tlbnMpCiAgICAgICAgICAgICAgICB0eXBvZ3JhcGh5U2VjdGlvbgogICAgICAgICAgICAgICAgSGFpcmxpbmVEaXZpZGVyKHRva2VuczogdG9rZW5zKQogICAgICAgICAgICAgICAgcGVyc29uYXNTZWN0aW9uCiAgICAgICAgICAgICAgICBIYWlybGluZURpdmlkZXIodG9rZW5zOiB0b2tlbnMpCiAgICAgICAgICAgICAgICBtb2RlbHNTZWN0aW9uCiAgICAgICAgICAgICAgICBIYWlybGluZURpdmlkZXIodG9rZW5zOiB0b2tlbnMpCiAgICAgICAgICAgICAgICBzdXBlcnZpc29yU2VjdGlvbgogICAgICAgICAgICB9CiAgICAgICAgICAgIC5mcmFtZShtYXhXaWR0aDogNzQwLCBhbGlnbm1lbnQ6IC5sZWFkaW5nKQogICAgICAgICAgICAucGFkZGluZygyOCkKICAgICAgICAgICAgLmZyYW1lKG1heFdpZHRoOiAuaW5maW5pdHkpCiAgICAgICAgICAgIC5iYWNrZ3JvdW5kKE92ZXJsYXlTY3JvbGxDb25maWd1cmF0b3IoaXNEYXJrOiB0b2tlbnMuaXNFZmZlY3RpdmVseURhcmspLmZyYW1lKHdpZHRoOiAxLCBoZWlnaHQ6IDEpKQogICAgICAgIH0KICAgIH0KfTsKICAgICRjb250ZW50ID1+IHMvJHBhdC8kcmVwL3M7Cn0KCiMgUGFyc2UgZW52aXJvbm1lbnQgdmFyaWFibGVzIGZyb20gd29ya2Zsb3cgaGVhZGVyCmlmICgkY29udGVudCA9fiAvZW52OlxzKlxuKC4qPylcbmpvYnM6L3MpIHsKICAgIGZvciBteSAkbCAoc3BsaXQgL1xuLywgJDEpIHsKICAgICAgICBpZiAoJGwgPX4gL15ccyooW0EtWmEtejAtOV9dKyk6XHMqWyJceDI3XT8oLio/KVsiXHgyN10/XHMqJC8pIHsKICAgICAgICAgICAgJEVOVnskMX0gPSAkMjsKICAgICAgICB9CiAgICB9Cn0KCiMgRXhlY3V0ZSBlYWNoIHdvcmtmbG93IHJ1biBibG9jawp3aGlsZSAoJGNvbnRlbnQgPX4gLy1ccypuYW1lOlxzKihbXlxuXSspXHMqXG5ccypydW46XHMqXHxcbiguKj8pKD89XG5ccyooPzotXHMqbmFtZTp8XFopKS9zZykgewogICAgbXkgKCRuYW1lLCAkY29kZSkgPSAoJDEsICQyKTsKICAgICRjb2RlID1+IHMvXlsgXXsxMH0vL21nOwogICAgcHJpbnQgIlxuPT09PT0gW1JVTl0gJG5hbWUgPT09PT1cbiI7CiAgICBzeXN0ZW0oImJhc2giLCAiLWUiLCAiLWMiLCAkY29kZSkgPT0gMCBvciBkaWUgIkZBSUxFRCBTVEVQOiAkbmFtZVxuIjsKfQo=
+          EOF
+          perl run_build.pl 2>&1 | tee build.log
+          test ${PIPESTATUS[0]} -eq 0
 
       - name: Commit Build Log to Main
         if: always()
