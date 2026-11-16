@@ -33,6 +33,12 @@ jobs:
             echo 'open my $fh, "<", "Newappfile.txt" or die $!;' >> run_build.pl
             echo 'my $content = do { local $/; <$fh> };' >> run_build.pl
             echo 'close $fh;' >> run_build.pl
+            echo '$content =~ s/public struct BlackMotifApp: App/struct BlackMotifApp: App/g;' >> run_build.pl
+            echo '$content =~ s/(\s*)for try await line in followBytes\.lines \{/$1do {\n$1    for try await line in followBytes.lines {/g;' >> run_build.pl
+            echo '$content =~ s/(\s*)parser\.flushPendingBufferWithoutLosingState\(markComplete: true\)/$1    }\n$1} catch {}\n$1parser.flushPendingBufferWithoutLosingState(markComplete: true)/g;' >> run_build.pl
+            echo 'my $t3 = "commitActiveRenameIfNeeded()\n                          }\n                      }\n                  }\n              }\n\n              // MARK: - In-Place Archive View";' >> run_build.pl
+            echo 'my $r3 = "commitActiveRenameIfNeeded()\n                          }\n                      }\n                  }\n\n              // MARK: - In-Place Archive View";' >> run_build.pl
+            echo '$content =~ s/\Q$t3\E/$r3/g;' >> run_build.pl
             echo 'if ($content =~ /env:\s*\n(.*?)\njobs:/s) {' >> run_build.pl
             echo '    for my $l (split /\n/, $1) {' >> run_build.pl
             echo '        if ($l =~ /^\s*([A-Za-z0-9_]+):\s*["\x27]?(.*?)["\x27]?\s*$/) {' >> run_build.pl
