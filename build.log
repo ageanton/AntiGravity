@@ -12,7 +12,7 @@ Target: arm64-apple-macosx15.0
 ===== [RUN] Create Project Directory Structure & Bundle Verified Editorial Fonts =====
 
 ===== [RUN] Generate Programmatic Architectural Squircle AppIcon.icns =====
--rw-r--r--  1 runner  staff   417K Nov 16 15:01 build/AppIcon.icns
+-rw-r--r--  1 runner  staff   417K Nov 16 15:09 build/AppIcon.icns
 
 ===== [RUN] Generate Package.swift =====
 
@@ -38,12 +38,12 @@ Target: arm64-apple-macosx15.0
 
 ===== [RUN] Compile Release Universal Binary (Swift 6) =====
 Building for production...
-[0/9] Copying PlusJakartaSans-Variable.ttf
-[0/9] Copying OpenSans-Variable.ttf
-[0/9] Copying Newsreader-Variable.ttf
-[0/9] Copying Inter-Variable.ttf
-[0/9] Copying Geist-Variable.ttf
-[5/9] Write sources
+[0/9] Write sources
+[1/9] Copying Geist-Variable.ttf
+[1/9] Copying PlusJakartaSans-Variable.ttf
+[1/9] Copying OpenSans-Variable.ttf
+[4/9] Copying Newsreader-Variable.ttf
+[4/9] Copying Inter-Variable.ttf
 [6/9] Write swift-version--79AA4F9932D1E87A.txt
 [8/10] Compiling BlackMotif GlassAndTelemetryComponents.swift
 /Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Engine/WorkstationStore.swift:1819:18: error: consecutive statements on a line must be separated by ';'
@@ -1608,14 +1608,6 @@ Building for production...
 222 |                             }
 223 |                             .font(typo.mono(size: 9.5, weight: .semibold))
 
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:72:27: error: cannot call value of non-function type 'Binding<Subject>'
- 70 |                 Button {
- 71 |                     commitActiveRenameIfNeeded()
- 72 |                     store.createNewSession(folderID: nil)
-    |                           `- error: cannot call value of non-function type 'Binding<Subject>'
- 73 |                 } label: {
- 74 |                     Image(systemName: "plus")
-
 /Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:72:27: error: value of type 'WorkstationStore' has no dynamic member 'createNewSession' using key path from root type 'WorkstationStore'
  70 |                 Button {
  71 |                     commitActiveRenameIfNeeded()
@@ -1629,6 +1621,14 @@ Building for production...
  71 |                     commitActiveRenameIfNeeded()
  72 |                     store.createNewSession(folderID: nil)
     |                     `- error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
+ 73 |                 } label: {
+ 74 |                     Image(systemName: "plus")
+
+/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:72:27: error: cannot call value of non-function type 'Binding<Subject>'
+ 70 |                 Button {
+ 71 |                     commitActiveRenameIfNeeded()
+ 72 |                     store.createNewSession(folderID: nil)
+    |                           `- error: cannot call value of non-function type 'Binding<Subject>'
  73 |                 } label: {
  74 |                     Image(systemName: "plus")
 
@@ -1664,149 +1664,107 @@ Building for production...
 240 |                         } label: {
 241 |                             Text("+")
 
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:406:35: error: value of type 'WorkstationStore' has no dynamic member 'emptyTrashPermanently' using key path from root type 'WorkstationStore'
-404 |                     if !trashedSessions.isEmpty {
-405 |                         Button("EMPTY ALL") {
-406 |                             store.emptyTrashPermanently()
-    |                                   `- error: value of type 'WorkstationStore' has no dynamic member 'emptyTrashPermanently' using key path from root type 'WorkstationStore'
-407 |                         }
-408 |                         .font(typo.mono(size: 9.5, weight: .semibold))
-
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:406:29: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
-404 |                     if !trashedSessions.isEmpty {
-405 |                         Button("EMPTY ALL") {
-406 |                             store.emptyTrashPermanently()
-    |                             `- error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
-407 |                         }
-408 |                         .font(typo.mono(size: 9.5, weight: .semibold))
-
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:406:35: error: cannot call value of non-function type 'Binding<Subject>'
-404 |                     if !trashedSessions.isEmpty {
-405 |                         Button("EMPTY ALL") {
-406 |                             store.emptyTrashPermanently()
+/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:405:35: error: cannot call value of non-function type 'Binding<Subject>'
+403 |                     if !trashedSessions.isEmpty {
+404 |                         Button("EMPTY ALL") {
+405 |                             store.emptyTrashPermanently()
     |                                   `- error: cannot call value of non-function type 'Binding<Subject>'
-407 |                         }
-408 |                         .font(typo.mono(size: 9.5, weight: .semibold))
+406 |                         }
+407 |                         .font(typo.mono(size: 9.5, weight: .semibold))
 
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:471:24: error: value of type 'WorkstationStore' has no dynamic member 'renameWorkspace' using key path from root type 'WorkstationStore'
-469 |     private func commitActiveRenameIfNeeded() {
-470 |         if let activeFolderID = renamingFolderID {
-471 |             self.store.renameWorkspace(folderID: activeFolderID, newName: folderRenameDraft)
-    |                        `- error: value of type 'WorkstationStore' has no dynamic member 'renameWorkspace' using key path from root type 'WorkstationStore'
-472 |             renamingFolderID = nil
-473 |         }
+/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:405:35: error: value of type 'WorkstationStore' has no dynamic member 'emptyTrashPermanently' using key path from root type 'WorkstationStore'
+403 |                     if !trashedSessions.isEmpty {
+404 |                         Button("EMPTY ALL") {
+405 |                             store.emptyTrashPermanently()
+    |                                   `- error: value of type 'WorkstationStore' has no dynamic member 'emptyTrashPermanently' using key path from root type 'WorkstationStore'
+406 |                         }
+407 |                         .font(typo.mono(size: 9.5, weight: .semibold))
 
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:471:18: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
-469 |     private func commitActiveRenameIfNeeded() {
-470 |         if let activeFolderID = renamingFolderID {
-471 |             self.store.renameWorkspace(folderID: activeFolderID, newName: folderRenameDraft)
-    |                  `- error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
-472 |             renamingFolderID = nil
-473 |         }
+/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:405:29: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
+403 |                     if !trashedSessions.isEmpty {
+404 |                         Button("EMPTY ALL") {
+405 |                             store.emptyTrashPermanently()
+    |                             `- error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
+406 |                         }
+407 |                         .font(typo.mono(size: 9.5, weight: .semibold))
 
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:471:24: error: cannot call value of non-function type 'Binding<Subject>'
-469 |     private func commitActiveRenameIfNeeded() {
-470 |         if let activeFolderID = renamingFolderID {
-471 |             self.store.renameWorkspace(folderID: activeFolderID, newName: folderRenameDraft)
-    |                        `- error: cannot call value of non-function type 'Binding<Subject>'
-472 |             renamingFolderID = nil
-473 |         }
+/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:470:19: error: cannot call value of non-function type 'Binding<Subject>'
+468 |     private func commitActiveRenameIfNeeded() {
+469 |         if let activeFolderID = renamingFolderID {
+470 |             store.renameWorkspace(folderID: activeFolderID, newName: folderRenameDraft)
+    |                   `- error: cannot call value of non-function type 'Binding<Subject>'
+471 |             renamingFolderID = nil
+472 |         }
 
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:475:20: error: cannot call value of non-function type 'Binding<Subject>'
-473 |         }
-474 |         guard let activeID = renamingSessionID else { return }
-475 |         self.store.commitInlineRename(sessionID: activeID, proposedName: renameDraft)
-    |                    `- error: cannot call value of non-function type 'Binding<Subject>'
-476 |         renamingSessionID = nil
-477 |     }
+/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:470:19: error: value of type 'WorkstationStore' has no dynamic member 'renameWorkspace' using key path from root type 'WorkstationStore'
+468 |     private func commitActiveRenameIfNeeded() {
+469 |         if let activeFolderID = renamingFolderID {
+470 |             store.renameWorkspace(folderID: activeFolderID, newName: folderRenameDraft)
+    |                   `- error: value of type 'WorkstationStore' has no dynamic member 'renameWorkspace' using key path from root type 'WorkstationStore'
+471 |             renamingFolderID = nil
+472 |         }
 
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:475:20: error: value of type 'WorkstationStore' has no dynamic member 'commitInlineRename' using key path from root type 'WorkstationStore'
-473 |         }
-474 |         guard let activeID = renamingSessionID else { return }
-475 |         self.store.commitInlineRename(sessionID: activeID, proposedName: renameDraft)
-    |                    `- error: value of type 'WorkstationStore' has no dynamic member 'commitInlineRename' using key path from root type 'WorkstationStore'
-476 |         renamingSessionID = nil
-477 |     }
+/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:470:13: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
+468 |     private func commitActiveRenameIfNeeded() {
+469 |         if let activeFolderID = renamingFolderID {
+470 |             store.renameWorkspace(folderID: activeFolderID, newName: folderRenameDraft)
+    |             `- error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
+471 |             renamingFolderID = nil
+472 |         }
 
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:475:14: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
-473 |         }
-474 |         guard let activeID = renamingSessionID else { return }
-475 |         self.store.commitInlineRename(sessionID: activeID, proposedName: renameDraft)
-    |              `- error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
-476 |         renamingSessionID = nil
-477 |     }
+/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:474:15: error: cannot call value of non-function type 'Binding<Subject>'
+472 |         }
+473 |         guard let activeID = renamingSessionID else { return }
+474 |         store.commitInlineRename(sessionID: activeID, proposedName: renameDraft)
+    |               `- error: cannot call value of non-function type 'Binding<Subject>'
+475 |         renamingSessionID = nil
+476 |     }
 
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:571:32: error: cannot call value of non-function type 'Binding<Subject>'
-569 |                 }
-570 |                 Button("Duplicate Folio") {
-571 |                     self.store.duplicateSession(session.id)
-    |                                `- error: cannot call value of non-function type 'Binding<Subject>'
-572 |                 }
-573 |                 Button("Export as Markdown…") {
+/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:474:15: error: value of type 'WorkstationStore' has no dynamic member 'commitInlineRename' using key path from root type 'WorkstationStore'
+472 |         }
+473 |         guard let activeID = renamingSessionID else { return }
+474 |         store.commitInlineRename(sessionID: activeID, proposedName: renameDraft)
+    |               `- error: value of type 'WorkstationStore' has no dynamic member 'commitInlineRename' using key path from root type 'WorkstationStore'
+475 |         renamingSessionID = nil
+476 |     }
 
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:571:32: error: value of type 'WorkstationStore' has no dynamic member 'duplicateSession' using key path from root type 'WorkstationStore'
-569 |                 }
-570 |                 Button("Duplicate Folio") {
-571 |                     self.store.duplicateSession(session.id)
-    |                                `- error: value of type 'WorkstationStore' has no dynamic member 'duplicateSession' using key path from root type 'WorkstationStore'
-572 |                 }
-573 |                 Button("Export as Markdown…") {
+/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:474:9: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
+472 |         }
+473 |         guard let activeID = renamingSessionID else { return }
+474 |         store.commitInlineRename(sessionID: activeID, proposedName: renameDraft)
+    |         `- error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
+475 |         renamingSessionID = nil
+476 |     }
 
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:571:26: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
-569 |                 }
-570 |                 Button("Duplicate Folio") {
-571 |                     self.store.duplicateSession(session.id)
-    |                          `- error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
-572 |                 }
-573 |                 Button("Export as Markdown…") {
+/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:570:27: error: cannot call value of non-function type 'Binding<Subject>'
+568 |                 }
+569 |                 Button("Duplicate Folio") {
+570 |                     store.duplicateSession(session.id)
+    |                           `- error: cannot call value of non-function type 'Binding<Subject>'
+571 |                 }
+572 |                 Button("Export as Markdown…") {
 
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/UtilityAndModalViews.swift:87:23: error: cannot assign to property: 'o' is a 'let' constant
- 80 | 
- 81 |     private func canvasColorBinding(for theme: AppThemeID) -> Binding<Color> {
- 82 |         let o = store.customPalettes.override(for: theme)
-    |         `- note: change 'let' to 'var' to make it mutable
- 83 |         return Binding<Color>(
- 84 |             get: { Color(red: o.canvasRed, green: o.canvasGreen, blue: o.canvasBlue) },
- 85 |             set: { newColor in
- 86 |                 if let cg = NSColor(newColor).usingColorSpace(.sRGB) {
- 87 |                     o.isCustomCanvasEnabled = true
-    |                       `- error: cannot assign to property: 'o' is a 'let' constant
- 88 |                     o.canvasRed = Double(cg.redComponent)
- 89 |                     o.canvasGreen = Double(cg.greenComponent)
+/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:570:27: error: value of type 'WorkstationStore' has no dynamic member 'duplicateSession' using key path from root type 'WorkstationStore'
+568 |                 }
+569 |                 Button("Duplicate Folio") {
+570 |                     store.duplicateSession(session.id)
+    |                           `- error: value of type 'WorkstationStore' has no dynamic member 'duplicateSession' using key path from root type 'WorkstationStore'
+571 |                 }
+572 |                 Button("Export as Markdown…") {
 
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/UtilityAndModalViews.swift:102:23: error: cannot assign to property: 'o' is a 'let' constant
- 95 | 
- 96 |     private func accentColorBinding(for theme: AppThemeID) -> Binding<Color> {
- 97 |         let o = store.customPalettes.override(for: theme)
-    |         `- note: change 'let' to 'var' to make it mutable
- 98 |         return Binding<Color>(
- 99 |             get: { Color(red: o.accentRed, green: o.accentGreen, blue: o.accentBlue) },
-100 |             set: { newColor in
-101 |                 if let cg = NSColor(newColor).usingColorSpace(.sRGB) {
-102 |                     o.isCustomAccentEnabled = true
-    |                       `- error: cannot assign to property: 'o' is a 'let' constant
-103 |                     o.accentRed = Double(cg.redComponent)
-104 |                     o.accentGreen = Double(cg.greenComponent)
+/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/SidebarNavigationView.swift:570:21: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
+568 |                 }
+569 |                 Button("Duplicate Folio") {
+570 |                     store.duplicateSession(session.id)
+    |                     `- error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<WorkstationStore>.Wrapper'
+571 |                 }
+572 |                 Button("Export as Markdown…") {
 
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/UtilityAndModalViews.swift:117:23: error: cannot assign to property: 'o' is a 'let' constant
-110 | 
-111 |     private func thinkingColorBinding(for theme: AppThemeID) -> Binding<Color> {
-112 |         let o = store.customPalettes.override(for: theme)
-    |         `- note: change 'let' to 'var' to make it mutable
-113 |         return Binding<Color>(
-114 |             get: { Color(red: o.thinkingRed, green: o.thinkingGreen, blue: o.thinkingBlue) },
-115 |             set: { newColor in
-116 |                 if let cg = NSColor(newColor).usingColorSpace(.sRGB) {
-117 |                     o.isCustomThinkingEnabled = true
-    |                       `- error: cannot assign to property: 'o' is a 'let' constant
-118 |                     o.thinkingRed = Double(cg.redComponent)
-119 |                     o.thinkingGreen = Double(cg.greenComponent)
-
-/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/UtilityAndModalViews.swift:126:32: error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
-124 |     }
-125 | 
-126 |     public var body: some View {
+/Users/runner/work/AntiGravity/AntiGravity/BlackMotif/Sources/BlackMotif/Views/UtilityAndModalViews.swift:129:32: error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+127 |     }
+128 | 
+129 |     public var body: some View {
     |                                `- error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
-127 |         ScrollView(.vertical, showsIndicators: true) {
-128 |             VStack(alignment: .leading, spacing: 24) {
+130 |         ScrollView(.vertical, showsIndicators: true) {
+131 |             VStack(alignment: .leading, spacing: 24) {
 FAILED STEP: Compile Release Universal Binary (Swift 6)
