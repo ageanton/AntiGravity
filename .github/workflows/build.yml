@@ -28,8 +28,11 @@ jobs:
           echo "Starting build pointing to Newappfile.txt..."
           if head -n 5 Newappfile.txt | grep -q "name:"; then
             echo "Extracting and executing workflow steps from Newappfile.txt..."
-            python3 -c '
-import re, subprocess, os, sys
+            cat << 'PYEOF' > run_build.py
+import re
+import subprocess
+import os
+import sys
 
 with open("Newappfile.txt", "r") as f:
     content = f.read()
@@ -38,7 +41,7 @@ with open("Newappfile.txt", "r") as f:
 env_match = re.search(r"env:\s*\n(.*?)\njobs:", content, re.DOTALL)
 if env_match:
     for line in env_match.group(1).splitlines():
-        m = re.match(r"^\s*([A-Za-z0-9_]+):\s*[\"'\''\"]?(.*?)[\"'\''\"]?\s*$", line)
+        m = re.match(r"^\s*([A-Za-z0-9_]+):\s*[\"']?(.*?)[\"']?\s*$", line)
         if m:
             os.environ[m.group(1)] = m.group(2)
 
@@ -52,7 +55,8 @@ for name, code in steps:
     if res.returncode != 0:
         print(f"FAILED: {name} exited with code {res.returncode}", file=sys.stderr)
         sys.exit(res.returncode)
-' 2>&1 | tee build.log
+PYEOF
+            python3 run_build.py 2>&1 | tee build.log
           else
             chmod +x Newappfile.txt
             ./Newappfile.txt 2>&1 | tee build.log
