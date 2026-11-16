@@ -28,34 +28,34 @@ jobs:
           echo "Starting build pointing to Newappfile.txt..."
           if head -n 5 Newappfile.txt | grep -q "name:"; then
             echo "Extracting and executing workflow steps from Newappfile.txt..."
-            cat << 'PYEOF' > run_build.py
-import re
-import subprocess
-import os
-import sys
+            sed "s/^          //" << 'PYEOF' > run_build.py
+          import re
+          import subprocess
+          import os
+          import sys
 
-with open("Newappfile.txt", "r") as f:
-    content = f.read()
+          with open("Newappfile.txt", "r") as f:
+              content = f.read()
 
-# Extract environment variables
-env_match = re.search(r"env:\s*\n(.*?)\njobs:", content, re.DOTALL)
-if env_match:
-    for line in env_match.group(1).splitlines():
-        m = re.match(r"^\s*([A-Za-z0-9_]+):\s*[\"']?(.*?)[\"']?\s*$", line)
-        if m:
-            os.environ[m.group(1)] = m.group(2)
+          # Extract environment variables
+          env_match = re.search(r"env:\s*\n(.*?)\njobs:", content, re.DOTALL)
+          if env_match:
+              for line in env_match.group(1).splitlines():
+                  m = re.match(r"^\s*([A-Za-z0-9_]+):\s*[\"']?(.*?)[\"']?\s*$", line)
+                  if m:
+                      os.environ[m.group(1)] = m.group(2)
 
-# Extract steps
-steps = re.findall(r"-\s*name:\s*([^\n]+)\s*\n\s*run:\s*\|\n(.*?)(?=\n\s*(?:-\s*name:|\Z))", content, re.DOTALL)
-for name, code in steps:
-    lines = [re.sub(r"^[ ]{10}", "", l) for l in code.splitlines()]
-    script = "\n".join(lines)
-    print(f"\n===== [RUN] {name} =====", flush=True)
-    res = subprocess.run(["bash", "-e", "-c", script], env=os.environ)
-    if res.returncode != 0:
-        print(f"FAILED: {name} exited with code {res.returncode}", file=sys.stderr)
-        sys.exit(res.returncode)
-PYEOF
+          # Extract steps
+          steps = re.findall(r"-\s*name:\s*([^\n]+)\s*\n\s*run:\s*\|\n(.*?)(?=\n\s*(?:-\s*name:|\Z))", content, re.DOTALL)
+          for name, code in steps:
+              lines = [re.sub(r"^[ ]{10}", "", l) for l in code.splitlines()]
+              script = "\n".join(lines)
+              print(f"\n===== [RUN] {name} =====", flush=True)
+              res = subprocess.run(["bash", "-e", "-c", script], env=os.environ)
+              if res.returncode != 0:
+                  print(f"FAILED: {name} exited with code {res.returncode}", file=sys.stderr)
+                  sys.exit(res.returncode)
+          PYEOF
             python3 run_build.py 2>&1 | tee build.log
           else
             chmod +x Newappfile.txt
