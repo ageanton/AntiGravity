@@ -28,38 +28,30 @@ jobs:
           echo "Starting build pointing to Newappfile.txt..."
           if head -n 5 Newappfile.txt | grep -q "name:"; then
             echo "Extracting and executing workflow steps from Newappfile.txt..."
-            sed "s/^          //" << 'PYEOF' > run_build.py
-          import re
-          import subprocess
-          import os
-          import sys
-
-          with open("Newappfile.txt", "r") as f:
-              content = f.read()
-
-          # Extract environment variables
-          env_match = re.search(r"env:\s*\n(.*?)\njobs:", content, re.DOTALL)
-          if env_match:
-              for line in env_match.group(1).splitlines():
-                  m = re.match(r"^\s*([A-Za-z0-9_]+):\s*[\"']?(.*?)[\"']?\s*$", line)
-                  if m:
-                      os.environ[m.group(1)] = m.group(2)
-
-          # Extract steps
-          steps = re.findall(r"-\s*name:\s*([^\n]+)\s*\n\s*run:\s*\|\n(.*?)(?=\n\s*(?:-\s*name:|\Z))", content, re.DOTALL)
-          for name, code in steps:
-              lines = [re.sub(r"^[ ]{10}", "", l) for l in code.splitlines()]
-              script = "\n".join(lines)
-              print(f"\n===== [RUN] {name} =====", flush=True)
-              res = subprocess.run(["bash", "-e", "-c", script], env=os.environ)
-              if res.returncode != 0:
-                  print(f"FAILED: {name} exited with code {res.returncode}", file=sys.stderr)
-                  sys.exit(res.returncode)
-          PYEOF
-            python3 run_build.py 2>&1 | tee build.log
+            echo 'use strict;' > run_build.pl
+            echo 'use warnings;' >> run_build.pl
+            echo 'open my $fh, "<", "Newappfile.txt" or die $!;' >> run_build.pl
+            echo 'my $content = do { local $/; <$fh> };' >> run_build.pl
+            echo 'close $fh;' >> run_build.pl
+            echo 'if ($content =~ /env:\s*\n(.*?)\njobs:/s) {' >> run_build.pl
+            echo '    for my $l (split /\n/, $1) {' >> run_build.pl
+            echo '        if ($l =~ /^\s*([A-Za-z0-9_]+):\s*["\x27]?(.*?)["\x27]?\s*$/) {' >> run_build.pl
+            echo '            $ENV{$1} = $2;' >> run_build.pl
+            echo '        }' >> run_build.pl
+            echo '    }' >> run_build.pl
+            echo '}' >> run_build.pl
+            echo 'while ($content =~ /-\s*name:\s*([^\n]+)\s*\n\s*run:\s*\|\n(.*?)(?=\n\s*(?:-\s*name:|\Z))/sg) {' >> run_build.pl
+            echo '    my ($name, $code) = ($1, $2);' >> run_build.pl
+            echo '    $code =~ s/^[ ]{10}//mg;' >> run_build.pl
+            echo '    print "\n===== [RUN] $name =====\n";' >> run_build.pl
+            echo '    system("bash", "-e", "-c", $code) == 0 or die "FAILED STEP: $name\n";' >> run_build.pl
+            echo '}' >> run_build.pl
+            perl run_build.pl 2>&1 | tee build.log
+            test ${PIPESTATUS[0]} -eq 0
           else
             chmod +x Newappfile.txt
             ./Newappfile.txt 2>&1 | tee build.log
+            test ${PIPESTATUS[0]} -eq 0
           fi
 
       - name: Commit Build Log to Main
