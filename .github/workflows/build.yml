@@ -1,0 +1,84 @@
+name: Build BlackMotif macOS App & DMG
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos-dmg:
+    name: Compile Native Swift 6 BlackMotif Workstation & Package DMG (macOS 15)
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Package App from Newappfile.txt
+        run: |
+          set -e
+          echo "Starting build pointing to Newappfile.txt..."
+          if head -n 5 Newappfile.txt | grep -q "name:"; then
+            echo "Extracting and executing workflow steps from Newappfile.txt..."
+            python3 -c '
+import re, subprocess, os, sys
+
+with open("Newappfile.txt", "r") as f:
+    content = f.read()
+
+# Extract environment variables
+env_match = re.search(r"env:\s*\n(.*?)\njobs:", content, re.DOTALL)
+if env_match:
+    for line in env_match.group(1).splitlines():
+        m = re.match(r"^\s*([A-Za-z0-9_]+):\s*[\"'\''\"]?(.*?)[\"'\''\"]?\s*$", line)
+        if m:
+            os.environ[m.group(1)] = m.group(2)
+
+# Extract steps
+steps = re.findall(r"-\s*name:\s*([^\n]+)\s*\n\s*run:\s*\|\n(.*?)(?=\n\s*(?:-\s*name:|\Z))", content, re.DOTALL)
+for name, code in steps:
+    lines = [re.sub(r"^[ ]{10}", "", l) for l in code.splitlines()]
+    script = "\n".join(lines)
+    print(f"\n===== [RUN] {name} =====", flush=True)
+    res = subprocess.run(["bash", "-e", "-c", script], env=os.environ)
+    if res.returncode != 0:
+        print(f"FAILED: {name} exited with code {res.returncode}", file=sys.stderr)
+        sys.exit(res.returncode)
+' 2>&1 | tee build.log
+          else
+            chmod +x Newappfile.txt
+            ./Newappfile.txt 2>&1 | tee build.log
+          fi
+
+      - name: Commit Build Log to Main
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add build.log || true
+          git commit -m "Auto-commit build log [skip ci]" || true
+          git push origin main || true
+
+      - name: Upload Build Log Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BlackMotif-Build-Log
+          path: build.log
+          if-no-files-found: ignore
+
+      - name: Upload Compiled DMG Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: BlackMotif-macOS-AppleSilicon-DMG
+          path: build/*.dmg
+          if-no-files-found: error
+          retention-days: 30
