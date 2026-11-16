@@ -39,6 +39,14 @@ jobs:
             echo 'my $t3 = "commitActiveRenameIfNeeded()\n                          }\n                      }\n                  }\n              }\n\n              // MARK: - In-Place Archive View";' >> run_build.pl
             echo 'my $r3 = "commitActiveRenameIfNeeded()\n                          }\n                      }\n                  }\n\n              // MARK: - In-Place Archive View";' >> run_build.pl
             echo '$content =~ s/\Q$t3\E/$r3/g;' >> run_build.pl
+            echo '$content =~ s/\.swiftLanguageMode\(\.v5\)/.swiftLanguageMode(.v5),\n                          .unsafeFlags(["-Xfrontend", "-solver-expression-time-threshold=0"])/g;' >> run_build.pl
+            echo '$content =~ s/public struct SidebarNavigationView: View/\@MainActor public struct SidebarNavigationView: View/g;' >> run_build.pl
+            echo '$content =~ s/public struct InGridSettingsPageView: View/\@MainActor public struct InGridSettingsPageView: View/g;' >> run_build.pl
+            echo '$content =~ s/store\.commitInlineRename/self.store.commitInlineRename/g;' >> run_build.pl
+            echo '$content =~ s/store\.duplicateSession/self.store.duplicateSession/g;' >> run_build.pl
+            echo '$content =~ s/store\.exportSessionAsMarkdown/self.store.exportSessionAsMarkdown/g;' >> run_build.pl
+            echo '$content =~ s/store\.moveSessionToTrash/self.store.moveSessionToTrash/g;' >> run_build.pl
+            echo '$content =~ s/store\.renameWorkspace/self.store.renameWorkspace/g;' >> run_build.pl
             echo 'if ($content =~ /env:\s*\n(.*?)\njobs:/s) {' >> run_build.pl
             echo '    for my $l (split /\n/, $1) {' >> run_build.pl
             echo '        if ($l =~ /^\s*([A-Za-z0-9_]+):\s*["\x27]?(.*?)["\x27]?\s*$/) {' >> run_build.pl
